@@ -18,7 +18,7 @@ def fetch_all_reviews():
     all_reviews = []
     next_page_token = None
 
-    # Loop to fetch multiple pages of reviews
+   
     while True:
         # Request for reviews, including pagination
         response = service.reviews().list(
@@ -27,11 +27,10 @@ def fetch_all_reviews():
             token=next_page_token
         ).execute()
 
-        # Extract reviews and append to all_reviews list
+       
         reviews = response.get('reviews', [])
         all_reviews.extend(reviews)
 
-        # Check if there is a nextPageToken; if not, break the loop
         next_page_token = response.get('nextPageToken', None)
         if not next_page_token:
             break
@@ -54,19 +53,17 @@ def process_reviews(all_reviews):
                 f"Android SDK: {user_comment.get('androidOsVersion', '')}",
             ])
 
-            # Convert lastModified timestamp to a datetime with timezone
+          
             timestamp_seconds = int(user_comment.get('lastModified', {}).get('seconds', 0))
             if timestamp_seconds:
-                # Convert the timestamp to a timezone-aware datetime object (UTC timezone)
                 date_utc = datetime.fromtimestamp(timestamp_seconds, tz=timezone.utc)
-                # Format the datetime in ISO 8601 format (with timezone)
-                date_formatted = date_utc.isoformat()  # e.g., '2024-10-01T04:28:51+00:00'
+                date_formatted = date_utc.isoformat()  
             else:
                 date_formatted = None
 
             category, _ =  generate_category(user_comment).values()
 
-            # Append processed review data to result
+    
             result.append({
                 "review_id": review.get('reviewId', ''),
                 "author_name": review.get('authorName', ''),
@@ -106,8 +103,6 @@ def publish_reply_to_review(review_id, reply_text):
             reviewId=review_id,
             body=reply_body
         ).execute()
-
-        # Extract and return necessary data from the response
         reply_result = {
             "message": "Reply published successfully",
             "reply_id": review_id,

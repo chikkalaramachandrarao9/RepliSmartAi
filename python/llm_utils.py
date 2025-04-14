@@ -31,20 +31,16 @@ def append_fiass_index_file(documents):
     embedding_matrix = np.array(embeddings).astype("float32")
     dimension = len(embedding_matrix[0])  
     
-    # Check if the index file exists
     if os.path.exists("faq_index_361.faiss"):
         index = faiss.read_index("faq_index_361.faiss")
         print(f"Loaded existing FAISS index with {index.ntotal} vectors")
     else:
-        # Create a new FAISS index if it doesn't exist
         index = faiss.IndexFlatL2(dimension)
         print("Created new FAISS index")
     
-    # Add new embeddings to the FAISS index
     index.add(embedding_matrix)
     print(f"Added {embedding_matrix.shape[0]} vectors to FAISS index, total vectors: {index.ntotal}")
     
-    # Optional: Save the updated FAISS index
     faiss.write_index(index, "faq_index_361.faiss")
     print(f"FAISS index saved to {"faq_index_361.faiss"}")
 
