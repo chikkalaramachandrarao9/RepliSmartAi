@@ -40,3 +40,9 @@ def fetch_faq_by_id(faq_id):
     finally:
         if cursor:
             cursor.close()
+
+def get_last_id(conn, table_name):
+    with conn.cursor() as cur:
+        cur.execute(f'SELECT MAX("ID") FROM {table_name};')
+        result = cur.fetchone()
+        return result[0] if result[0] is not None else 0

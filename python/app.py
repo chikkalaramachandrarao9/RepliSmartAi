@@ -8,6 +8,7 @@ from llm_utils import generate_feedback_reply,append_fiass_index_file
 from googlereviews import publish_reply_to_review
 from ps_utils import connect_to_database,fetch_reviews,upsert_data
 from constants import MODEL, DATABASE_NAME, POSTGRES_USER_NAME, POSTGRES_PASSWORD, HOST, PORT
+from db_helper import get_last_id
 
 # Initialize Flask and CORS
 app = Flask(__name__)
@@ -62,7 +63,9 @@ def upload_file():
                 for _, row in df_cleaned.iterrows()
              ]
         documents_df = pd.DataFrame(documents, columns=['Chunks'])
-        upsert_data(conn, "faqs", "ID", data=documents_df)
+        last_id = get_last_id(conn, "faqs")
+        documents_df["ID"] = range(last_id + 1, last_id + 1 + len(documents_df))
+        upsert_data(conn, "faq", "ID", data=documents_df)
         append_fiass_index_file(documents)
         return jsonify({"message": "File uploaded and read successfully", "status": True}), 200
     except Exception as e:
